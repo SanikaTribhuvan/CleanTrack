@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CleanTrack: Smart Garbage Collection Monitor</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <style>
+        /* Global Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+        }
+
+        /* Background Video */
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        /* Dashboard Container */
+        .dashboard {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 1100px;
+            background: rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(6px);
+            border-radius: 20px;
+            box-shadow: 0 0 25px rgba(76, 175, 80, 0.6);
+            padding: 30px;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        h1 {
+            font-size: 2.8rem;
+            color: #E8F5E9;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+            margin-bottom: 20px;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stats {
+            flex: 1;
+            min-width: 200px;
+            padding: 20px;
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+            margin: 10px;
+            transition: transform 0.3s;
+        }
+
+        .stats:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
+        }
+
+        .stats p {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            text-shadow: 0 0 10px rgba(76, 175, 80, 0.8);
+        }
+
+        /* Button Container */
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 200px;
+            padding: 12px;
+            margin: 10px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(to right, #388E3C, #4CAF50);
+            box-shadow: 0 0 20px rgba(76, 175, 80, 0.8);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn:hover {
+            transform: scale(1.1);
+            background: linear-gradient(to right, #2E7D32, #43A047);
+        }
+
+        .btn i {
+            margin-right: 10px;
+        }
+
+        .loading {
+            color: #FFD700;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+    </style>
+</head>
+<body>
+    <video class="video-bg" autoplay loop muted>
+        <source src="bgvid.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <div class="dashboard">
+        <h1>CleanTrack: Smart Garbage Collection Monitor</h1>
+        <div class="stats-container">
+            <div class="stats">
+                <p><i class="fas fa-home"></i> Total Houses</p>
+                <p class="stat-number" id="totalHouses">
+                    <span class="loading">...</span>
+                </p>
+            </div>
+            <div class="stats">
+                <p><i class="fas fa-check-circle"></i> Scanned Today</p>
+                <p class="stat-number" id="scannedToday">
+                    <span class="loading">...</span>
+                </p>
+            </div>
+            <div class="stats">
+                <p><i class="fas fa-exclamation-triangle"></i> Remaining Today</p>
+                <p class="stat-number" id="remainingToday">
+                    <span class="loading">...</span>
+                </p>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <a href="reg_driver/reg_driver.html" class="btn"><i class="fas fa-user-plus"></i> Register Driver</a>
+            <a href="reg_driver/reg_house.html" class="btn"><i class="fas fa-home"></i> Register Household</a>
+            <a href="driver_details.php" class="btn"><i class="fas fa-id-card"></i> Driver Details</a>
+            <a href="house_details.php" class="btn"><i class="fas fa-list"></i> Household Details</a>
+            <a href="scanned_house.php" class="btn"><i class="fas fa-database"></i> Scanned Households</a>
+        </div>
+    </div>
+
+    <script>
+        // Fetch statistics when page loads
+        async function loadStats() {
+            try {
+                const response = await fetch('api/get_stats.php');
+                const result = await response.json();
+                
+                if (result.success) {
+                    const data = result.data;
+                    
+                    // Update the numbers with animation
+                    animateNumber('totalHouses', data.totalHouses);
+                    animateNumber('scannedToday', data.scannedToday);
+                    animateNumber('remainingToday', data.remainingToday);
+                } else {
+                    console.error('Error:', result.message);
+                    showError();
+                }
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+                showError();
+            }
+        }
+
+        // Animate number counting
+        function animateNumber(elementId, targetNumber) {
+            const element = document.getElementById(elementId);
+            const duration = 1000; // 1 second
+            const steps = 30;
+            const increment = targetNumber / steps;
+            let current = 0;
+            
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= targetNumber) {
+                    element.textContent = targetNumber;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(current);
+                }
+            }, duration / steps);
+        }
+
+        // Show error message
+        function showError() {
+            ['totalHouses', 'scannedToday', 'remainingToday'].forEach(id => {
+                document.getElementById(id).innerHTML = '<span style="color: #ff6b6b;">Error</span>';
+            });
+        }
+
+        // Auto-refresh stats every 30 seconds
+        setInterval(loadStats, 30000);
+
+        // Load stats on page load
+        window.addEventListener('DOMContentLoaded', loadStats);
+    </script>
+</body>
+</html>

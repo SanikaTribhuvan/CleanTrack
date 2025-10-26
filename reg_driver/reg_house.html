@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Household - CleanTrack</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 700px;
+            width: 100%;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header i {
+            font-size: 3rem;
+            color: #11998e;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-group label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .form-group label .required {
+            color: #e74c3c;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #11998e;
+            box-shadow: 0 0 0 3px rgba(17, 153, 142, 0.1);
+        }
+
+        .form-group input.error {
+            border-color: #e74c3c;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(17, 153, 142, 0.4);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #28a745;
+            display: none;
+        }
+
+        .error-alert {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border-left: 4px solid #e74c3c;
+            display: none;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            color: #11998e;
+            text-decoration: none;
+            margin-bottom: 20px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .back-link:hover {
+            gap: 8px;
+        }
+
+        .qr-code-display {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .qr-code-display h3 {
+            color: #11998e;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .qr-code-display p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #333;
+            word-break: break-all;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="../index.html" class="back-link">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="header">
+            <i class="fas fa-home"></i>
+            <h1>Register New Household</h1>
+            <p>Add a new household to the CleanTrack system</p>
+        </div>
+
+        <div class="success-message" id="successMessage"></div>
+        <div class="error-alert" id="errorAlert"></div>
+
+        <form id="houseForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label>House Number <span class="required">*</span></label>
+                    <input type="text" id="house_number" name="house_number" placeholder="e.g., A-101" required>
+                    <div class="error-message" id="houseNumberError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Resident Name <span class="required">*</span></label>
+                    <input type="text" id="resident_name" name="resident_name" placeholder="Full name" required>
+                    <div class="error-message" id="residentNameError"></div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Phone Number <span class="required">*</span></label>
+                    <input type="tel" id="phone" name="phone" placeholder="10-digit number" maxlength="10" required>
+                    <div class="error-message" id="phoneError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="email" name="email" placeholder="email@example.com">
+                    <div class="error-message" id="emailError"></div>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label>Address <span class="required">*</span></label>
+                <textarea id="address" name="address" placeholder="Complete address" required></textarea>
+                <div class="error-message" id="addressError"></div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Area/Sector <span class="required">*</span></label>
+                    <input type="text" id="area" name="area" placeholder="e.g., Sector A" required>
+                    <div class="error-message" id="areaError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="city" name="city" placeholder="Ahilyanagar" value="Ahilyanagar">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>PIN Code</label>
+                    <input type="text" id="pin_code" name="pin_code" placeholder="6-digit PIN" maxlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label>Latitude (Optional)</label>
+                    <input type="text" id="latitude" name="latitude" placeholder="e.g., 19.8762">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Longitude (Optional)</label>
+                <input type="text" id="longitude" name="longitude" placeholder="e.g., 75.3433">
+            </div>
+
+            <div class="qr-code-display" id="qrCodeDisplay">
+                <h3><i class="fas fa-qrcode"></i> Generated QR Code:</h3>
+                <p id="qrCodeValue"></p>
+            </div>
+
+            <div class="btn-container">
+                <button type="button" class="btn btn-secondary" onclick="resetForm()">
+                    <i class="fas fa-redo"></i> Reset
+                </button>
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span id="btnText"><i class="fas fa-check"></i> Register Household</span>
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const form = document.getElementById('houseForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const btnText = document.getElementById('btnText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const successMessage = document.getElementById('successMessage');
+        const errorAlert = document.getElementById('errorAlert');
+        const qrCodeDisplay = document.getElementById('qrCodeDisplay');
+        const qrCodeValue = document.getElementById('qrCodeValue');
+
+        function validatePhone(phone) {
+            return /^[0-9]{10}$/.test(phone);
+        }
+
+        function validateEmail(email) {
+            if (!email) return true;
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        function showError(fieldId, message) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            if (field && errorDiv) {
+                field.classList.add('error');
+                errorDiv.textContent = message;
+                errorDiv.style.display = 'block';
+            }
+        }
+
+        function clearError(fieldId) {
+            const field = document.getElementById(fieldId);
+            const errorDiv = document.getElementById(fieldId + 'Error');
+            if (field && errorDiv) {
+                field.classList.remove('error');
+                errorDiv.style.display = 'none';
+            }
+        }
+
+        function clearAllErrors() {
+            ['houseNumber', 'residentName', 'phone', 'email', 'address', 'area'].forEach(clearError);
+            errorAlert.style.display = 'none';
+            successMessage.style.display = 'none';
+            qrCodeDisplay.style.display = 'none';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearAllErrors();
+
+            const formData = {
+                house_number: document.getElementById('house_number').value.trim(),
+                resident_name: document.getElementById('resident_name').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                address: document.getElementById('address').value.trim(),
+                area: document.getElementById('area').value.trim(),
+                city: document.getElementById('city').value.trim() || 'Ahilyanagar',
+                pin_code: document.getElementById('pin_code').value.trim(),
+                latitude: document.getElementById('latitude').value.trim(),
+                longitude: document.getElementById('longitude').value.trim()
+            };
+
+            let isValid = true;
+
+            if (!formData.house_number) {
+                showError('houseNumber', 'House number is required');
+                isValid = false;
+            }
+
+            if (!formData.resident_name) {
+                showError('residentName', 'Resident name is required');
+                isValid = false;
+            }
+
+            if (!validatePhone(formData.phone)) {
+                showError('phone', 'Please enter a valid 10-digit phone number');
+                isValid = false;
+            }
+
+            if (formData.email && !validateEmail(formData.email)) {
+                showError('email', 'Please enter a valid email address');
+                isValid = false;
+            }
+
+            if (!formData.address) {
+                showError('address', 'Address is required');
+                isValid = false;
+            }
+
+            if (!formData.area) {
+                showError('area', 'Area is required');
+                isValid = false;
+            }
+
+            if (!isValid) return;
+
+            submitBtn.disabled = true;
+            btnText.style.display = 'none';
+            loadingSpinner.style.display = 'block';
+
+            try {
+                const response = await fetch('../api/register_house.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    successMessage.innerHTML = `
+                        <strong>Success!</strong> Household registered successfully.<br>
+                        <strong>House:</strong> ${result.data.houseNumber}<br>
+                        <strong>Area:</strong> ${result.data.area}<br>
+                        <strong>QR Code:</strong> ${result.data.qrCode}
+                    `;
+                    successMessage.style.display = 'block';
+                    
+                    qrCodeValue.textContent = result.data.qrCode;
+                    qrCodeDisplay.style.display = 'block';
+                    
+                    form.reset();
+                    
+                    setTimeout(() => {
+                        window.location.href = '../house_details.php';
+                    }, 4000);
+                } else {
+                    errorAlert.innerHTML = `<strong>Error!</strong> ${result.message}`;
+                    errorAlert.style.display = 'block';
+                }
+            } catch (error) {
+                errorAlert.innerHTML = `<strong>Error!</strong> Failed to register household. Please check your connection.`;
+                errorAlert.style.display = 'block';
+                console.error('Error:', error);
+            } finally {
+                submitBtn.disabled = false;
+                btnText.style.display = 'flex';
+                loadingSpinner.style.display = 'none';
+            }
+        });
+
+        function resetForm() {
+            form.reset();
+            clearAllErrors();
+        }
+
+        ['house_number', 'resident_name', 'phone', 'email', 'address', 'area'].forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', () => {
+                    const errorId = fieldId.replace(/_/g, '').replace('number', 'Number').replace('name', 'Name');
+                    clearError(errorId);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
